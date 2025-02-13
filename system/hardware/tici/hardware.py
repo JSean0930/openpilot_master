@@ -385,7 +385,7 @@ class Tici(HardwareBase):
     # *** IRQ config ***
 
     # GPU
-    affine_irq(5, "kgsl-3d0")
+    affine_irq(7, "kgsl-3d0")
 
     # camerad core
     camera_irqs = ("a5", "cci", "cpas_camnoc", "cpas-cdm", "csid", "ife", "csid-lite", "ife-lite")

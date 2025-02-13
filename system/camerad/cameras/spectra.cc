@@ -888,7 +888,7 @@ void SpectraCamera::enqueue_buffer(int i, bool dp) {
     ret = do_sync_control(m->cam_sync_fd, CAM_SYNC_WAIT, &sync_wait, sizeof(sync_wait));
     if (ret != 0) {
       clear_req_queue();
-      LOGE("failed to wait for sync: %d %d", ret, sync_wait.sync_obj);
+      LOGE("failed to wait for IFE sync: %d %d", ret, sync_wait.sync_obj);
     }
 
     if (ret == 0 && output_type == ISP_BPS_PROCESSED) {
@@ -898,7 +898,7 @@ void SpectraCamera::enqueue_buffer(int i, bool dp) {
       ret = do_sync_control(m->cam_sync_fd, CAM_SYNC_WAIT, &sync_wait, sizeof(sync_wait));
       if (ret != 0) {
         clear_req_queue();
-        LOGE("failed to wait for sync: %d %d", ret, sync_wait.sync_obj);
+        LOGE("failed to wait for BPS sync: %d %d", ret, sync_wait.sync_obj);
       }
     }
 
@@ -1351,7 +1351,9 @@ void SpectraCamera::handle_camera_event(const cam_req_mgr_message *event_data) {
   uint64_t real_id = event_data->u.frame_msg.request_id;
 
   if (real_id != 0) { // next ready
-    if (real_id == 1) {idx_offset = main_id;}
+    if (real_id == 1) {
+      idx_offset = main_id;
+    }
     int buf_idx = (real_id - 1) % ife_buf_depth;
 
     // check for skipped frames
