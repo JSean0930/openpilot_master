@@ -83,7 +83,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
 #def get_stopped_equivalence_factor(v_lead):
   #return (v_lead**2) / (2 * COMFORT_BRAKE)
 
-
+def get_stopped_equivalence_factor(v_lead, v_ego):
 
 def get_safe_obstacle_distance(v_ego, t_follow):
   return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
