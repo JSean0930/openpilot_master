@@ -84,6 +84,25 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   #return (v_lead**2) / (2 * COMFORT_BRAKE)
 
 def get_stopped_equivalence_factor(v_lead, v_ego):
+  # KRKeegan this offset rapidly decreases the following distance when the lead pulls
+  # away, resulting in an early demand for acceleration.
+  v_diff_offset_max = 4  # Max additional offset distance
+  delta_speed = v_lead - v_ego  # Relative speed of lead vs. ego
+
+  v_diff_offset = np.zeros_like(delta_speed)  # Ensures proper shape
+
+  mask = delta_speed > 0.5  # Only apply logic when lead is pulling away
+
+  if np.any(mask):
+    # 🔧 **Stronger Low-Speed Acceleration Scaling**
+    scaling_factor = np.interp(v_ego, [0, 1, 3, 5, 9, 11, 22], [2.8, 2.0, 0.95, 0.88, 0.83, 0.83, 0.83])
+    v_diff_offset[mask] = delta_speed[mask] * scaling_factor
+    v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
+
+    # 🔧 **Reduce Ego Speed Scaling Effect at Low Speeds**
+    ego_scaling = np.interp(v_ego, [0, 1, 3, 5, 11, 20], [1.8, 1.7, 1.1, 1.0, 0.95, 0.9])
+    v_diff_offset *= ego_scaling   
+  return (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
 
 def get_safe_obstacle_distance(v_ego, t_follow):
   return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
