@@ -3,6 +3,7 @@ import os
 import time
 import numpy as np
 from cereal import log
+from openpilot.common.conversions import Conversions as CV
 from opendbc.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
@@ -79,9 +80,11 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
-def get_stopped_equivalence_factor(v_lead):
-  return (v_lead**4) / (2 * COMFORT_BRAKE)
+#def get_stopped_equivalence_factor(v_lead):
+  #return (v_lead**4) / (2 * COMFORT_BRAKE)
   #return (v_lead**2) / (2 * COMFORT_BRAKE)
+
+
 
 def get_safe_obstacle_distance(v_ego, t_follow):
   return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
