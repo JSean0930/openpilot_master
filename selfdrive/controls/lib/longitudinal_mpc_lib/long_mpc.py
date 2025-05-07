@@ -81,7 +81,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
     raise NotImplementedError("Longitudinal personality not supported")
 
 #def get_stopped_equivalence_factor(v_lead):
-  return (v_lead**4) / (2 * COMFORT_BRAKE)
+  #return (v_lead**4) / (2 * COMFORT_BRAKE)
   #return (v_lead**2) / (2 * COMFORT_BRAKE)
 
 def get_stopped_equivalence_factor(v_lead, v_ego):
