@@ -388,12 +388,16 @@ class LongitudinalMpc:
                                      lead_1_obstacle])
       cruise_target = T_IDXS * np.clip(v_cruise, v_ego - 2.0, 1e3) + x[0]
       xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
-      x = np.cumsum(np.insert(xforward, 0, x[0]))
+      #x = np.cumsum(np.insert(xforward, 0, x[0]))
+      x_e2e = np.cumsum(np.insert(xforward, 0, x[0]))
 
-      x_and_cruise = np.column_stack([x, cruise_target])
-      x = np.min(x_and_cruise, axis=1)
-
-      self.source = 'e2e' if x_and_cruise[1,0] < x_and_cruise[1,1] else 'cruise'
+      v_low, v_high = 0.2, mid_thr
+      w = np.clip((v_ego - v_low) / (v_high - v_low), 0.0, 0.5)
+      x_mixed = w * np.minimum(x_e2e, cruise_target) + (1 - w) * np.maximum(x_e2e, cruise_target)
+      #x_and_cruise = np.column_stack([x, cruise_target])
+      #x = np.min(x_and_cruise, axis=1)
+      x = x_mixed
+      #self.source = 'e2e' if x_and_cruise[1,0] < x_and_cruise[1,1] else 'cruise'
 
     else:
       raise NotImplementedError(f'Planner mode {self.mode} not recognized in planner update')
