@@ -48,7 +48,7 @@ ACADOS_SOLVER_TYPE = 'SQP_RTI'
 # much better convergence of the MPC with low iterations
 N = 16
 MAX_T = 15.0
-T_IDXS = (np.linspace(0, 1, N + 1) ** 2.0) * MAX_
+T_IDXS = (np.linspace(0, 1, N + 1) ** 2.0) * MAX_T
 
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
