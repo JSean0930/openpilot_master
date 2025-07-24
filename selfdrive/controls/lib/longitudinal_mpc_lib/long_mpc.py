@@ -46,8 +46,8 @@ ACADOS_SOLVER_TYPE = 'SQP_RTI'
 
 # Fewer timestamps don't hurt performance and lead to
 # much better convergence of the MPC with low iterations
-N = 16
-MAX_T = 15.0
+N = 12
+MAX_T = 10.0
 T_IDXS = (np.linspace(0, 1, N + 1) ** 2.0) * MAX_T
 
 FCW_IDXS = T_IDXS < 5.0
