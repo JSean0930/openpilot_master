@@ -58,6 +58,13 @@ STOP_DISTANCE = 4.0
 CRUISE_MIN_ACCEL = -1.2
 CRUISE_MAX_ACCEL = 1.0
 
+#===================================================================
+# 閾值（m/s）
+low_thr  = 20.0 / 3.6   # km/hr to m/s
+mid_thr = 30.0 / 3.6   # km/hr to m/s
+high_thr = 70.0 / 3.6
+#===================================================================
+
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
     return 1.5
