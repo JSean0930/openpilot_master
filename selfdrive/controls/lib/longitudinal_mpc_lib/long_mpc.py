@@ -404,15 +404,17 @@ class LongitudinalMpc:
       cruise_target = T_IDXS * np.clip(v_cruise, v_ego - 2.0, 1e3) + x[0]
       xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
       #x = np.cumsum(np.insert(xforward, 0, x[0]))
+      x_e2e = np.cumsum(np.insert(xforward, 0, x[0]))
 
-      x_and_cruise = np.column_stack([x, cruise_target])
+      #x_and_cruise = np.column_stack([x, cruise_target])
       #x = np.min(x_and_cruise, axis=1)
 
       w = np.clip((v_ego - 5.0) / 25.0, 0.0, 1.0)  # 5~30 m/s（18~108 km/h）間線性加權
-      x = (1 - w) * np.min(x_and_cruise, axis=1) + w * np.max(x_and_cruise, axis=1)
-
+      #x_mixed = (1 - w) * np.min(x_and_cruise, axis=1) + w * np.max(x_and_cruise, axis=1)
+      x_mixed = (1 - w) * np.minimum(x_e2e, cruise_target) + w * np.maximum(x_e2e, cruise_target)
+      x[:] = x_mixed
       
-      self.source = 'e2e' if x_and_cruise[1,0] > x_and_cruise[1,1] else 'cruise'
+      self.source = 'e2e' if x_and_cruise[1,0] < x_and_cruise[1,1] else 'cruise'
 
       #self.source = 'e2e' if x_and_cruise[1,0] > x_and_cruise[1,1] * 1.2 else 'cruise'
 
