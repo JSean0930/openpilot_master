@@ -377,6 +377,16 @@ class LongitudinalMpc:
     self.params[:,0] = ACCEL_MIN
     self.params[:,1] = ACCEL_MAX
 
+    #==================================================================
+    if v_ego > mid_thr:
+        self.mode = 'acc'
+        self.set_weights(prev_accel_constraint=True, personality=personality)
+    elif v_ego <= mid_thr:
+        self.mode = 'blended'
+        self.set_weights(prev_accel_constraint=True, personality=personality)
+
+    #==================================================================
+
     # Update in ACC mode or ACC/e2e blend
     if self.mode == 'acc':
       self.params[:,5] = LEAD_DANGER_FACTOR
