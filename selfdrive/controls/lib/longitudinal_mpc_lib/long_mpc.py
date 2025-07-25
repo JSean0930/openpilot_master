@@ -378,7 +378,7 @@ class LongitudinalMpc:
       x = (1 - w) * np.min(x_and_cruise, axis=1) + w * np.max(x_and_cruise, axis=1)
 
       
-      self.source = 'e2e' if x_and_cruise[1,0] < x_and_cruise[1,1] else 'cruise'
+      self.source = 'e2e' if x_and_cruise[1,0] > x_and_cruise[1,1] else 'cruise'
 
       #self.source = 'e2e' if x_and_cruise[1,0] > x_and_cruise[1,1] * 1.2 else 'cruise'
 
