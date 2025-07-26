@@ -77,7 +77,7 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
 
 def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    return 1.3
+    return 1.5
   elif personality==log.LongitudinalPersonality.standard:
     return 1.2
   elif personality==log.LongitudinalPersonality.aggressive:
@@ -410,7 +410,7 @@ class LongitudinalMpc:
       x_and_cruise = np.column_stack([x, cruise_target])
       #x = np.min(x_and_cruise, axis=1)
 
-      w = np.clip((v_ego - 5.0) / 25.0, 0.0, 1.0)  # 5~30 m/s（18~108 km/h）間線性加權
+      w = np.clip((v_ego - 0.5) / 25.0, 0.0, 1.0)  # 5~30 m/s（18~108 km/h）間線性加權
       x_mixed = (1 - w) * np.min(x_and_cruise, axis=1) + w * np.max(x_and_cruise, axis=1)
       #x_mixed = (1 - w) * np.minimum(x_e2e, cruise_target) + w * np.maximum(x_e2e, cruise_target)
       x = x_mixed
