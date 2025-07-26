@@ -92,9 +92,9 @@ def get_stopped_equivalence_factor(v_lead, v_ego):
   # KRKeegan this offset rapidly decreases the following distance when the lead pulls
   # away, resulting in an early demand for acceleration.
   v_diff_offset = 0
-  v_diff_offset_max = 2 #12,5
-  speed_to_reach_max_v_diff_offset = 8 #26,12 # in kp/h
-  speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * 3.6
+  v_diff_offset_max = 0.5 #12,5
+  speed_to_reach_max_v_diff_offset = 2.22 #26,12 # in kp/h
+  speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset
   delta_speed = v_lead - v_ego
   if np.all(delta_speed > 0.0):
     v_diff_offset = (np.clip(delta_speed, 0, 5)) ** 2.5
