@@ -288,7 +288,7 @@ class LongitudinalMpc:
       constraint_cost_weights = [LIMIT_COST, LIMIT_COST, LIMIT_COST, DANGER_ZONE_COST]
     elif self.mode == 'blended':
       a_change_cost = 40.0 if prev_accel_constraint else 0
-      cost_weights = [0., 0.1, 0.2, 5.0, a_change_cost, 3.0]
+      cost_weights = [0., 0.1, 0.2, 5.0, a_change_cost, 5.0]
       constraint_cost_weights = [LIMIT_COST, LIMIT_COST, LIMIT_COST, DANGER_ZONE_COST]
     else:
       raise NotImplementedError(f'Planner mode {self.mode} not recognized in planner cost set')
@@ -354,12 +354,12 @@ class LongitudinalMpc:
     self.params[:,1] = ACCEL_MAX
 
     #==================================================================
-    #if v_ego > mid_thr:
-        #self.mode = 'acc'
-        #self.set_weights(prev_accel_constraint=True, personality=personality)
-    #elif v_ego <= mid_thr:
-        #self.mode = 'blended'
-        #self.set_weights(prev_accel_constraint=True, personality=personality)
+    if v_ego > mid_thr:
+        self.mode = 'acc'
+        self.set_weights(prev_accel_constraint=True, personality=personality)
+    elif v_ego <= mid_thr:
+        self.mode = 'blended'
+        self.set_weights(prev_accel_constraint=True, personality=personality)
 
     #==================================================================
 
@@ -389,16 +389,16 @@ class LongitudinalMpc:
                                      lead_1_obstacle])
       cruise_target = T_IDXS * np.clip(v_cruise, v_ego - 2.0, 1e3) + x[0]
       xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
-      #x = np.cumsum(np.insert(xforward, 0, x[0]))
-      x_e2e = np.cumsum(np.insert(xforward, 0, x[0]))
+      x = np.cumsum(np.insert(xforward, 0, x[0]))
+      #x_e2e = np.cumsum(np.insert(xforward, 0, x[0]))
 
-      #x_and_cruise = np.column_stack([x, cruise_target])
+      x_and_cruise = np.column_stack([x, cruise_target])
       #x = np.min(x_and_cruise, axis=1)
 
       w = np.clip((v_ego - 5.0) / 25.0, 0.0, 1.0)  # 5~30 m/s（18~108 km/h）間線性加權
-      #x_mixed = (1 - w) * np.min(x_and_cruise, axis=1) + w * np.max(x_and_cruise, axis=1)
-      x_mixed = (1 - w) * np.minimum(x_e2e, cruise_target) + w * np.maximum(x_e2e, cruise_target)
-      x = x_mixed
+      x_mixed = (1 - w) * np.min(x_and_cruise, axis=1) + w * np.max(x_and_cruise, axis=1)
+      #x_mixed = (1 - w) * np.minimum(x_e2e, cruise_target) + w * np.maximum(x_e2e, cruise_target)
+      x[:] = x_mixed
       
       self.source = 'e2e' if x_and_cruise[1,0] < x_and_cruise[1,1] else 'cruise'
 
