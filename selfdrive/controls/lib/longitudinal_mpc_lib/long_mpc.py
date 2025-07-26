@@ -284,20 +284,17 @@ class LongitudinalMpc:
     jerk_factor = get_jerk_factor(personality)
     #=========================
     v_ego = self.x0[1]
-    relative_dist = np.clip(v_lead - v_ego, -5.0, 5.0)
-    j_ego_v_ego = np.interp(v_ego, [0, mid_thr, high_thr], [0.6, 1.0, 2.0])       # 高速 jerk cost 高
-    a_change_v_ego = np.interp(relative_dist, [-1.0, 0.0, 1.0], [1.2, 1.0, 0.7])  # 前車遠 → 提高靈敏度
     #=========================
     if self.mode == 'acc':
       jerk_comf = 3.0
       if v_ego > high_thr:
         jerk_comf *= 3.0
       a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
-      cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, a_change_v_ego * jerk_factor * a_change_cost, j_ego_v_ego * jerk_comf * jerk_factor * J_EGO_COST]
+      cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, jerk_factor * a_change_cost, jerk_comf * jerk_factor * J_EGO_COST]
       constraint_cost_weights = [LIMIT_COST, LIMIT_COST, LIMIT_COST, DANGER_ZONE_COST]
     elif self.mode == 'blended':
       a_change_cost = 40.0 if prev_accel_constraint else 0
-      cost_weights = [0., 0.1, 0.2, 5.0, a_change_cost * a_change_v_ego, 3.0 * j_ego_v_ego]
+      cost_weights = [0., 0.1, 0.2, 5.0, a_change_cost, 3.0]
       constraint_cost_weights = [LIMIT_COST, LIMIT_COST, LIMIT_COST, DANGER_ZONE_COST]
     else:
       raise NotImplementedError(f'Planner mode {self.mode} not recognized in planner cost set')
