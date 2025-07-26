@@ -369,12 +369,12 @@ class LongitudinalMpc:
     self.params[:,1] = ACCEL_MAX
 
     #==================================================================
-    if v_ego > mid_thr:
-        self.mode = 'acc'
-        self.set_weights(prev_accel_constraint=True, personality=personality)
-    elif v_ego <= mid_thr:
-        self.mode = 'blended'
-        self.set_weights(prev_accel_constraint=True, personality=personality)
+    #if v_ego > mid_thr:
+        #self.mode = 'acc'
+        #self.set_weights(prev_accel_constraint=True, personality=personality)
+    #elif v_ego <= mid_thr:
+        #self.mode = 'blended'
+        #self.set_weights(prev_accel_constraint=True, personality=personality)
 
     #==================================================================
 
@@ -413,7 +413,7 @@ class LongitudinalMpc:
       w = np.clip((v_ego - 5.0) / 25.0, 0.0, 1.0)  # 5~30 m/s（18~108 km/h）間線性加權
       x_mixed = (1 - w) * np.min(x_and_cruise, axis=1) + w * np.max(x_and_cruise, axis=1)
       #x_mixed = (1 - w) * np.minimum(x_e2e, cruise_target) + w * np.maximum(x_e2e, cruise_target)
-      x[:] = x_mixed
+      x = x_mixed
       
       self.source = 'e2e' if x_and_cruise[1,0] < x_and_cruise[1,1] else 'cruise'
 
